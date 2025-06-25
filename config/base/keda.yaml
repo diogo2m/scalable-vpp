@@ -1,0 +1,17 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: vpp-scaledobject
+  namespace: default
+spec:
+  scaleTargetRef:
+    name: vpp
+  minReplicaCount: 1
+  maxReplicaCount: 5
+  triggers:
+  - type: prometheus
+    metadata:
+      serverAddress: http://prometheus-server.monitoring.svc.cluster.local
+      metricName: vpp_packets_rate
+      query: avg(linux_interface_rx_packets{interface="eth0"})
+      threshold: "100"

@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: vpp
+  name: vpp
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vpp
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: vpp
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9191"
+    spec:
+      hostNetwork: true
+      containers:
+      - image: vpp:latest
+        imagePullPolicy: Never
+        name: vpp
+        resources: 
+          limits:
+            memory: "12Gi"
+        securityContext:
+          capabilities:
+            add:
+            - SYS_ADMIN
+          privileged: true
+        volumeMounts:
+        - name: dev
+          mountPath: /dev
+        - name: modules
+          mountPath: /lib/modules
+        - name: hugepage
+          mountPath: /hugepages
+        resources:
+          limits:
+            hugepages-2Mi: 256Mi
+            memory: 256Mi
+          requests:
+            memory: 2Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      volumes:
+      - name: dev
+        hostPath:
+          path: /dev
+      - name: modules
+        hostPath:
+          path: /lib/modules
+      - name: hugepage
+        emptyDir:
+          medium: HugePages
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30

@@ -1,0 +1,17 @@
+# Bring interfaces uip
+# #HundredGigabitEthernet1a/0/3/409  1      up          9000/0/0/0     
+#HundredGigabitEthernet1a/0/4/409  2  
+set interface state HundredGigabitEthernet1a/0/0 up
+set interface state HundredGigabitEthernet1a/0/1 up
+
+# Assign IPs
+set interface ip address HundredGigabitEthernet1a/0/0 50.50.50.1/24
+set interface ip address HundredGigabitEthernet1a/0/1 60.60.60.1/24
+
+# Set logical names (tags)
+set interface tag HundredGigabitEthernet1a/0/0 eth0
+set interface tag HundredGigabitEthernet1a/0/1 eth1
+
+# Add static routes
+ip route add 50.50.50.0/24 via 60.60.60.2
+ip route add 60.60.60.0/24 via 50.50.50.2
