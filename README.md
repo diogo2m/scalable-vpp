@@ -36,7 +36,7 @@ apt-get update
 
 ```bash
 apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-apt-get install -y kubelet kubeadm kubectl
+apt-get install -y containerd kubelet kubeadm kubectl
 systemctl enable --now kubelet
 systemctl enable --now docker.service
 systemctl enable --now containerd.service
@@ -90,6 +90,7 @@ sudo systemctl daemon-reload && sudo systemctl restart kubelet
 
 ```bash
 sudo containerd config default | sudo tee /etc/containerd/config.toml
+sudo sed -i 's/SystemdCgroup = false/SystemdCgroup = true/' /etc/containerd/config.toml
 ```
 
 `/etc/containerd/config.toml`
